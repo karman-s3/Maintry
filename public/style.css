@@ -1,0 +1,216 @@
+@import url('https://fonts.googleapis.com/css2?family=Stack+Sans+Text:wght@200..700&display=swap');
+
+:root {
+    /* color palette */ 
+    --accent-color: #d04513; 
+    --base-color : #ffffff; 
+    --text-color: #0d0400; 
+    --input-color : #fff8f6; 
+    --incorrect-box: #e50000; 
+    --hover-color: #ff672fb0;
+}
+
+/* Target every element to reset browser defaults and fix sizing math */ 
+* {
+    margin: 0;
+    padding: 0; 
+    box-sizing: border-box; /* Forcing the padding to stay INSIDE the width/height */
+}
+
+html {
+    font-family: 'Poppins', sans-serif; 
+    font-size: 12pt; 
+    color: var(--text-color); 
+    text-align: center; 
+}
+
+body {
+    min-height: 100vh; 
+    background-image: url(pexels-maddyfreddie-7238603.jpg); 
+    background-size: 45% 100%; 
+    background-repeat: no-repeat; 
+    background-position: right center; 
+    overflow: hidden;  
+
+    display: flex; 
+    align-items: center; 
+    justify-content: flex-start;
+}
+
+.wrapper {
+    box-sizing: border-box; 
+    background-color: var(--base-color); 
+    height: 107vh; 
+
+    width: 55%; 
+    padding: 40px 20px;
+    border-radius:  0 20px 20px 0; 
+    display: flex; 
+    flex-direction: column;
+    align-items: center; 
+    justify-content: center; 
+}
+
+/* apperance of the heading */ 
+
+h1{
+    font-size: 3rem; 
+    font-weight: 900; 
+    text-transform: uppercase; 
+}
+
+form{ /* general form apperance */
+    width: min(400px, 100%); 
+    margin-top: 20px; 
+    margin-bottom: 50px; 
+    display: flex;
+    flex-direction: column; 
+    align-items: center; 
+    gap: 10px;  
+}
+
+/* apperance of the containers */
+
+form > div{
+    width: 100%;
+    display: flex; 
+    justify-content: center; 
+}
+
+form label{ /* icons */ 
+    flex-shrink: 0; 
+    height: 65px; 
+    width: 50px; 
+    background-color: var(--accent-color); 
+    fill: var(--base-color);
+    border-radius: 10px 0 0 10px; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+
+
+}
+
+form input{ 
+    box-sizing: border-box; 
+    flex-grow:1;
+    min-width:0;
+    height:65px; 
+    padding: 1em;
+    font: inherit;  
+    border-radius: 0 10px 10px 0; 
+    border: 2px solid var(--input-color); 
+    border-left:none; 
+    background-color: var(--input-color);
+    transition: 150ms ease; 
+}
+
+form input:hover{
+    border-color: var(--accent-color);
+}
+
+form input:focus{
+    outline: none; 
+    border-color: var(--text-color); 
+}
+
+div:has(input:focus) > label {
+    background-color: var(--text-color);
+}
+
+form input::placeholder{
+    color: var(--text-color); 
+}
+
+form button {
+    margin-top: 10px; 
+    border: none; 
+    border-radius:1000px; 
+    padding: 0.85em 4em; 
+
+    background-color: var(--accent-color);
+    color: var(--base-color); 
+    font: inherit; 
+    font-weight: 600; 
+    text-transform: uppercase; 
+    cursor: pointer; 
+    transition: 150ms ease; 
+
+}
+
+form button:hover{
+    background-color: var(--text-color);
+}
+
+form button:focus{
+    outline:none; 
+    background-color: var(--text-color); 
+}
+
+a{
+    text-decoration: none;
+    color: var(--accent-color); 
+}
+
+a.hover{
+    text-decoration: underline; 
+}
+
+
+@media(max-width: 1100px){
+    .wrapper{
+        width: min(600 px, 100%); 
+        border-radius: 0; 
+    }
+    
+}
+
+.incorrect label {
+    background-color: var(--incorrect-box);
+
+}
+
+form div.incorrect input{
+    border-color: var(--incorrect-box);
+}
+
+.sitelogo {
+    position: absolute;
+    top: 10px; 
+    left: 5px; 
+    z-index: 10; 
+    padding: 0 25px;
+    border: 2px solid transparent; 
+    transition: 150ms ease; 
+}
+
+.sitelogo a{
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    text-decoration: none;
+}
+
+.sitelogo img{
+    height: 120px;
+    width: auto; 
+    object-fit: cover;
+    display: block; 
+    border-radius: 50%;
+    transition: 150ms ease; 
+}
+
+.sitelogo:hover{
+    filter: drop-shadow(0 0 0 var(--hover-color))
+            drop-shadow(0 0 3px var(--hover-color));
+}
+
+.sitelogo h2{
+    color:var(--text-color);
+    font-size:2rem;
+    margin: 0; 
+    width:auto; 
+    height:auto; 
+}
+
+

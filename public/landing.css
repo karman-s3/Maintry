@@ -1,0 +1,187 @@
+:root{
+    --accent-color: #d04513;
+    --text-color: #0d0400;
+    --base-color: #ffffff;
+    --hover-color: #ff672fb0;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family: Poppins, sans-serif;
+    overflow:hidden;
+}
+
+
+/* splash screen of logo*/
+
+#splash-screen{
+    position:fixed;
+    inset:0;
+
+    background-color:var(--accent-color);
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    z-index:1000;
+
+    transition:opacity 1s ease;
+}
+
+#splash-screen h1{
+    color:white;
+    font-size:6rem;
+    letter-spacing:8px;
+}
+
+/*landing page */ 
+
+#landing-page{
+    min-height:100vh;
+
+    background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url("pexels-ono-kosuki-5974387.jpg");
+    background-size:cover;
+    background-position:center;
+
+
+    display:flex;
+    flex-direction:column;
+
+    opacity:0;
+    transition:opacity 1s ease;
+}
+
+header{
+    padding:25px 50px;
+
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+header img{
+    height:60px;
+    height: 120px;
+    width: auto; 
+    object-fit: contain;
+    display: block; 
+    border-radius: 50%;
+    transition: 150ms ease; 
+}
+
+header h1{
+    color:white;
+    font-size:2rem;
+}
+
+header:hover{
+    filter: drop-shadow(0 0 0 var(--text-color))
+            drop-shadow(0 0 3px var(--text-color));
+}
+
+
+.hero{
+
+    flex:1;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+
+    text-align:center;
+
+    color:white;
+
+    padding:20px;
+}
+
+.hero h2{
+    font-size:3rem;
+    margin-bottom:20px;
+}
+
+.hero p{
+    max-width:700px;
+    font-size:1.2rem;
+    line-height:1.7;
+
+    margin-bottom:40px;
+}
+
+.buttons{
+    display:flex;
+    gap:20px;
+}
+
+.signup-btn,
+.login-btn{
+    text-decoration:none;
+
+    padding:15px 30px;
+
+    border-radius:10px;
+
+    font-weight:600;
+
+    transition:0.2s ease;
+}
+
+.signup-btn{
+    background-color:var(--accent-color);
+    color:white;
+}
+
+.signup-btn:hover{
+    transform:translateY(-2px);
+}
+
+.login-btn{
+    background-color:white;
+    color:var(--text-color);
+}
+
+.login-btn:hover{
+    transform:translateY(-2px);
+}
+
+footer{
+    text-align:center;
+
+    padding:20px;
+
+    color:white;
+
+    background:  #d04513;
+}
+
+.sitelogo {
+    position: absolute;
+    top: 10px; 
+    left: 5px; 
+    z-index: 10; 
+    padding: 0 25px;
+    border: 2px solid transparent; 
+    transition: 150ms ease; 
+
+}
+
+.sitelogo img{
+    height: 120px;
+    width: auto; 
+    object-fit: cover;
+    display: block; 
+    border-radius: 50%;
+    transition: 150ms ease; 
+}
+
+.sitelogo:hover{
+    filter: drop-shadow(0 0 0 var(--text-color))
+            drop-shadow(0 0 3px var(--text-color));
+}

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Manager</title>
+
+    <link rel="stylesheet" href="home.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script src="home.js" defer></script>
+</head>
+<body>
+
+    <nav class="navbar">
+
+        <button class="nav-btn active" data-page="assets">Assets</button>
+        
+        <button class="nav-btn" data-page="upcoming">Upcoming</button>
+        <button class="nav-btn" data-page="history">History</button>
+       
+       
+        <button class="nav-btn" data-page="professionals">Professionals</button>
+        <button class="nav-btn" data-page="news">News</button>
+
+        <a href="home.html" class="nav-brand">
+            <img src="websiteicon.png" alt="Maintry Logo">
+            <span>MAINTRY</span>
+        </a>
+
+    </nav>
+
+    <h1 id="welcome-message">Loading...</h1>
+
+    <div id="pages">
+
+        <section id="assets" class="page active">
+
+            <h2>Your Assets</h2>
+
+            <button id="add-asset-btn">+ Add Asset</button>
+            <button id="delete-assets-btn">Delete Assets</button>
+
+            <!--Assets at the top-->
+            <div id="asset-container"></div>
+
+            <!-- the overview title after the assets-->
+            <h2 class="summary-title">Asset Overview</h2>
+
+            <!-- charts at the very bottom -->
+            <div class="asset-summary">
+
+                <div class="summary-top">
+                    <div class="summary-card">
+                        <h3>Monthly Cost Trend</h3>
+                        <canvas id="costChart"></canvas>
+                    </div>
+
+                    <div class="summary-card">
+                        <h3>Efficiency (Task Completion %)</h3>
+                        <canvas id="efficiencyChart"></canvas>
+                    </div>
+                </div>
+
+                    <div class="summary-bottom">
+
+                        <div class="asset-cost-scroll kpi-cost-card">
+
+                            <h4 class="kpi-title">Total Maintenance Cost</h4>
+
+                            <div class="kpi-body">
+
+                                <div class="kpi-left">
+                                    All Assets To Date:
+                                </div>
+
+                                <div class="kpi-right" id="totalMaintenanceCostValue">
+                                    $0
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="asset-cost-scroll">
+                            <h4>Cost per Asset</h4>
+                            <div id="assetCostList" class="asset-cost-list"></div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+        <section id="upcoming" class="page"><h2>Upcoming Maintenance</h2></section>
+        <section id="history" class="page"><h2>History</h2></section>
+        
+        
+        <section id="professionals" class="page">
+
+            <div class="prof-layout">
+
+                <!-- left side showcasing the results from search -->
+                <div class="prof-left">
+
+                    <h1 class="prof-title">Find Professionals</h1>
+
+                    <form class="prof-search-form" id="professional-search-form">
+
+                        <div>
+                            <label for="task-search">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffff">
+                                    <path d="M480-80q-33 0-56.5-23.5T400-160v-120H280q-33 0-56.5-23.5T200-360v-320q0-33 23.5-56.5T280-760h400q33 0 56.5 23.5T760-680v320q0 33-23.5 56.5T680-280H560v120q0 33-23.5 56.5T480-80Z"/>
+                                </svg>
+                            </label>
+
+                            <input id="task-search" type="text" placeholder="Maintenance task">
+                        </div>
+
+                        <div>
+                            <label for="location-search">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffff">
+                                    <path d="M480-80q-133 0-226.5-93.5T160-400q0-100 58.5-179T360-688v-72h240v72q83 29 141.5 108T800-400q0 133-93.5 226.5T480-80Z"/>
+                                </svg>
+                            </label>
+
+                            <input id="location-search" type="text" placeholder="City, Province/State">
+                        </div>
+
+                        <button type="submit" id="search-professionals-btn">Search</button>
+
+                    </form>
+
+                    <div id="professional-results" class="prof-results"></div>
+
+                </div>
+
+                <!-- right side showing pinned professionals -->
+                <div class="prof-right">
+
+                    <h2 class="prof-fav-title">Pinned</h2>
+
+                    <div id="favorite-professionals"></div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section id="news" class="page"><h2>News</h2></section>
+
+    </div>
+
+    <!--each asset box for each asset showing name and type-->
+    <div id="asset-form-modal" class="modal-overlay">
+
+        <div class="modal-box">
+
+            <span class="close-modal">&times;</span>
+
+            <h2>Create Asset</h2>
+
+            <input type="text" id="asset-name" placeholder="Asset Name">
+            <input type="text" id="asset-type" placeholder="Asset Type">
+            
+            <!--to create asset choosing name, type, and color from given options-->
+
+            <div id="color-picker">
+
+                <button
+                    id="selected-color"
+                    type="button"
+                >
+                    Choose a Color
+                </button>
+
+                <div id="color-options">
+
+                    <div class="color-choice" data-color="#FF69B4"></div> <!--pink-->
+                    <div class="color-choice" data-color="#2563eb"></div> <!--blue-->
+                    <div class="color-choice" data-color="#16a34a"></div>
+                    <div class="color-choice" data-color="#dc2626"></div>
+                    <div class="color-choice" data-color="#9333ea"></div>
+                    <div class="color-choice" data-color="#f59e0b"></div>
+
+                </div>
+
+            </div>
+
+            <button id="save-asset-btn">Save Asset</button>
+
+        </div>
+    </div>
+
+    <div id="delete-assets-modal" class="modal-overlay">
+
+        <div class="modal-box">
+
+            <span class="close-delete-modal">&times;</span>
+
+            <h2>Delete Assets</h2>
+
+            <div id="delete-assets-list"></div>
+
+            <div class="delete-warning">
+
+                <p>
+                    Confirm to delete.
+                    Deleted items cannot be retrieved.
+                </p>
+
+                <button id="confirm-delete-btn">
+                    Delete Selected Assets
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- maintance model to create maintenance and view them-->
+    <div id="asset-modal">
+
+        <div class="modal-content">
+
+            <span class="close-modal">&times;</span>
+
+            <h2 id="selected-asset-name">No Asset Selected</h2>
+
+            <div id="maintenance-form">
+
+                <h3>Add Maintenance Task</h3>
+
+                <input type="text" id="maintenance-title" placeholder="Task Title">
+                <input type="date" id="maintenance-date">
+
+                <textarea id="maintenance-notes" placeholder="Notes" maxlength="30"></textarea>
+
+                <button id="add-maintenance-btn">Save Maintenance Item</button>
+
+            </div>
+
+            <div id="maintenance-container"></div>
+
+        </div>
+    </div>
+
+
+
+    <!--button located on bottom right corner -- should take back to landing page-->
+
+    <button id="logout-btn">Log Out</button>
+</body>
+</html>
