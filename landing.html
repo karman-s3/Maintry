@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maintry</title>
+
+    <link rel="stylesheet" href="landing.css">
+</head>
+<body>
+
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <h1>MAINTRY</h1>
+    </div>
+
+    <!-- Main Landing Page -->
+    <div id="landing-page">
+
+        <header>
+            <img src="websiteicon.png" alt="sitelogo">
+            <h1>MAINTRY</h1>
+        </header>
+
+        <section class="hero">
+
+            <h2>Track Every Asset. Find Every Fix</h2>
+
+            <p>
+                MAINTRY helps you monitor routine maintenance schedules, log
+                service history, and set smart reminders for your home, vehicles, appliances,
+                instruments, and gear-all in one place. Need immediate help? Instantly connect with local
+                contractors, technicans, and specialists.
+
+            </p>
+
+            <div class="buttons">
+                <a href="signup.html" class="signup-btn">Create Account</a>
+                <a href="login.html" class="login-btn">Login</a>
+            </div>
+
+        </section>
+
+        <footer>
+            Contact: support@trackr.com
+        </footer>
+
+    </div>
+
+    <script>
+        setTimeout(() => {
+            document.getElementById("splash-screen").style.opacity = "0";
+
+            setTimeout(() => {
+                document.getElementById("splash-screen").style.display = "none";
+                document.getElementById("landing-page").style.opacity = "1";
+            }, 1000);
+
+        }, 2000);
+    </script>
+
+</body>
+</html>
