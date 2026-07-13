@@ -35,7 +35,7 @@ form.addEventListener('submit', async (e) => {
     try {
       error_message.innerText = "Creating your account..."
 
-      const res = await fetch('/signup', {
+      const res = await fetch('https://maintry-backend.onrender.com/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -62,7 +62,7 @@ form.addEventListener('submit', async (e) => {
   try {
     error_message.innerText = "Logging in..."
 
-    const res = await fetch('/login', {
+    const res = await fetch('https://maintry-backend.onrender.com/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
