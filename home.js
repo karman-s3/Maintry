@@ -11,7 +11,7 @@ const token = localStorage.getItem('token');
 
 const navButtons = document.querySelectorAll('.nav-btn');
 const pages = document.querySelectorAll('.page');
-
+//login page
 if (!token) {
     window.location.href = 'login.html';
 }
