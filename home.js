@@ -308,59 +308,93 @@ document.getElementById('add-maintenance-btn').addEventListener('click', async (
 });
 
 // loading user assets
-
+// Robust loadAssets() function for home.js
 async function loadAssets() {
-    const res = await fetch(`https://maintry-backend.onrender.com/assets?t=${Date.now()}`, {
-        headers: { Authorization: `Bearer ${token}` }
-    });
-    const assets = await res.json();
     const container = document.getElementById('asset-container');
-    container.innerHTML = '';
+    if (!container) return;
 
-    for (const asset of assets) {
-        const maintenanceRes = await fetch(`https://maintry-backend.onrender.com/maintenance/${asset._id}`, {
+    try {
+        const res = await fetch(`https://maintry-backend.onrender.com/assets?t=${Date.now()}`, {
             headers: { Authorization: `Bearer ${token}` }
         });
-        
-        const tasks = await maintenanceRes.json();
-        
-        const totalTasks = tasks.length;
-        const completedTasks = tasks.filter(task => task.completed).length;
-        const progressPercent = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
-        const card = document.createElement('div');
-        card.className = 'asset-card';
-        card.innerHTML = `
-            <div class="card-main-content">
-                <div class="asset-info">
-                    <h2>${asset.name}</h2>
-                    <p>${asset.type}</p>
-                </div>
+        if (!res.ok) {
+            console.error("Failed to fetch assets, status:", res.status);
+            return;
+        }
+
+        const assets = await res.json();
+        container.innerHTML = '';
+
+        if (!Array.isArray(assets) || assets.length === 0) {
+            container.innerHTML = '<p class="empty-assets">No assets found. Add one above!</p>';
+            return;
+        }
+
+        // Fetch maintenance tasks for all assets in parallel instead of sequentially
+        const assetPromises = assets.map(async (asset) => {
+            let tasks = [];
+            try {
+                const maintenanceRes = await fetch(`https://maintry-backend.onrender.com/maintenance/${asset._id}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
                 
-                <div class="asset-progress-wrapper">
-                    <div class="progress-text-row">
-                        <span>Progress</span>
-                        <span>${completedTasks}/${totalTasks} Done</span>
+                if (maintenanceRes.ok) {
+                    const data = await maintenanceRes.json();
+                    if (Array.isArray(data)) {
+                        tasks = data;
+                    }
+                }
+            } catch (err) {
+                console.error(`Error loading tasks for asset ${asset._id}:`, err);
+            }
+
+            const totalTasks = tasks.length;
+            const completedTasks = tasks.filter(task => task && task.completed).length;
+            const progressPercent = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
+            const card = document.createElement('div');
+            card.className = 'asset-card';
+            card.innerHTML = `
+                <div class="card-main-content">
+                    <div class="asset-info">
+                        <h2>${asset.name}</h2>
+                        <p>${asset.type}</p>
                     </div>
-                    <div class="progress-bar-bg">
-                        <div class="progress-bar-fill" style="width: ${progressPercent}%; background: ${asset.color};"></div>
+                    
+                    <div class="asset-progress-wrapper">
+                        <div class="progress-text-row">
+                            <span>Progress</span>
+                            <span>${completedTasks}/${totalTasks} Done</span>
+                        </div>
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" style="width: ${progressPercent}%; background: ${asset.color || '#d04513'};"></div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <button class="open-asset-btn" style="background:${asset.color}">➜</button>
-        `;
-        container.appendChild(card);
+                <button class="open-asset-btn" style="background:${asset.color || '#d04513'}">➜</button>
+            `;
 
-        card.querySelector('.open-asset-btn').addEventListener('click', () => {
-            currentAssetId = asset._id;
-            document.getElementById('selected-asset-name').innerText = `${asset.name} (${asset.type})`;
-            document.getElementById('asset-modal').classList.add('active');
-            loadMaintenance(asset._id);
+            card.querySelector('.open-asset-btn').addEventListener('click', () => {
+                currentAssetId = asset._id;
+                document.getElementById('selected-asset-name').innerText = `${asset.name} (${asset.type})`;
+                document.getElementById('asset-modal').classList.add('active');
+                loadMaintenance(asset._id);
+            });
+
+            return card;
         });
+
+        const cards = await Promise.all(assetPromises);
+        cards.forEach(card => {
+            if (card) container.appendChild(card);
+        });
+
+    } catch (err) {
+        console.error("Critical error inside loadAssets():", err);
     }
 }
-
 // the dispkat of maintences 
 async function loadMaintenance(assetId) {
     const res = await fetch(`https://maintry-backend.onrender.com/maintenance/${assetId}`, {
