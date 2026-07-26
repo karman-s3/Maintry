@@ -17,6 +17,8 @@ const Asset = require('./models/Asset')
 
 const Maintenance = require('./models/Maintenance')
 
+const Favorite = require('./models/Favorite');
+
 
 
 const User = require(`./models/user`)
@@ -451,7 +453,7 @@ app.delete(
 
 
 
-const PORT = process.env.PORT || 3000; 
+const PORT = 3000; 
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
@@ -516,3 +518,90 @@ app.put(
     }
 );
 
+
+// get user's favorites
+app.get('/favorites', verifyToken, async(req,res)=>{
+
+    try{
+
+        const favorites = await Favorite.find({
+            userId:req.userId
+        });
+
+
+        res.json(favorites);
+
+    }catch(err){
+
+        res.status(500).json({
+            error:err.message
+        });
+
+    }
+
+});
+
+
+app.post('/favorites', verifyToken, async(req,res)=>{
+
+    try{
+
+        const favorite = new Favorite({
+
+            userId:req.userId,
+
+            name:req.body.name,
+
+            address:req.body.address,
+
+            phone:req.body.phone,
+
+            key:req.body.key
+
+        });
+
+
+        await favorite.save();
+
+
+        res.json(favorite);
+
+
+    }catch(err){
+
+        res.status(500).json({
+            error:err.message
+        });
+
+    }
+
+});
+
+
+app.delete('/favorites/:key', verifyToken, async(req,res)=>{
+
+    try{
+
+        await Favorite.deleteOne({
+
+            userId:req.userId,
+
+            key:req.params.key
+
+        });
+
+
+        res.json({
+            message:"Deleted"
+        });
+
+
+    }catch(err){
+
+        res.status(500).json({
+            error:err.message
+        });
+
+    }
+
+});
