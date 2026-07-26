@@ -308,7 +308,7 @@ document.getElementById('add-maintenance-btn').addEventListener('click', async (
 });
 
 // loading user assets
-// Robust loadAssets() function for home.js
+
 async function loadAssets() {
     const container = document.getElementById('asset-container');
     if (!container) return;
@@ -318,8 +318,9 @@ async function loadAssets() {
             headers: { Authorization: `Bearer ${token}` }
         });
 
+        // 1. Ensure backend response is OK before parsing
         if (!res.ok) {
-            console.error("Failed to fetch assets, status:", res.status);
+            console.error("Failed to fetch assets, server returned status:", res.status);
             return;
         }
 
@@ -327,26 +328,31 @@ async function loadAssets() {
         container.innerHTML = '';
 
         if (!Array.isArray(assets) || assets.length === 0) {
-            container.innerHTML = '<p class="empty-assets">No assets found. Add one above!</p>';
+            container.innerHTML = '<p class="empty-assets">No assets found. Add one to get started!</p>';
             return;
         }
 
-        // Fetch maintenance tasks for all assets in parallel instead of sequentially
-        const assetPromises = assets.map(async (asset) => {
+        // 2. Safely process each asset without letting one failed request crash the rest
+        for (const asset of assets) {
             let tasks = [];
+
             try {
                 const maintenanceRes = await fetch(`https://maintry-backend.onrender.com/maintenance/${asset._id}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                
-                if (maintenanceRes.ok) {
+
+                // Check both HTTP status and content-type before calling .json()
+                const contentType = maintenanceRes.headers.get("content-type");
+                if (maintenanceRes.ok && contentType && contentType.includes("application/json")) {
                     const data = await maintenanceRes.json();
                     if (Array.isArray(data)) {
                         tasks = data;
                     }
+                } else {
+                    console.warn(`Could not load tasks for asset ID ${asset._id} (Status: ${maintenanceRes.status})`);
                 }
-            } catch (err) {
-                console.error(`Error loading tasks for asset ${asset._id}:`, err);
+            } catch (taskErr) {
+                console.error(`Network error loading tasks for asset ${asset._id}:`, taskErr);
             }
 
             const totalTasks = tasks.length;
@@ -376,25 +382,20 @@ async function loadAssets() {
                 <button class="open-asset-btn" style="background:${asset.color || '#d04513'}">➜</button>
             `;
 
+            container.appendChild(card);
+
             card.querySelector('.open-asset-btn').addEventListener('click', () => {
                 currentAssetId = asset._id;
                 document.getElementById('selected-asset-name').innerText = `${asset.name} (${asset.type})`;
                 document.getElementById('asset-modal').classList.add('active');
                 loadMaintenance(asset._id);
             });
-
-            return card;
-        });
-
-        const cards = await Promise.all(assetPromises);
-        cards.forEach(card => {
-            if (card) container.appendChild(card);
-        });
-
+        }
     } catch (err) {
-        console.error("Critical error inside loadAssets():", err);
+        console.error("Critical error in loadAssets():", err);
     }
 }
+
 // the dispkat of maintences 
 async function loadMaintenance(assetId) {
     const res = await fetch(`https://maintry-backend.onrender.com/maintenance/${assetId}`, {
