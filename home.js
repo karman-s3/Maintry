@@ -5,7 +5,7 @@ let isExecuting = false;
 let costChart = null;
 let efficiencyChart = null;
 
-let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+let favorites = [];
 
 const token = localStorage.getItem('token');
 
@@ -17,7 +17,7 @@ if (!token) {
 }
 
 // authorization for user
-fetch('https://maintry-backend.onrender.com/protected', {
+fetch('/protected', {
     headers: { Authorization: `Bearer ${token}` }
 })
 .then(res => {
@@ -27,9 +27,16 @@ fetch('https://maintry-backend.onrender.com/protected', {
     }
     return res.json();
 })
-.then(data => {
-    document.getElementById('welcome-message').innerText = `Welcome ${data.firstname}!`;
+
+.then(async data => {
+
+    document.getElementById('welcome-message').innerText =
+    `Welcome ${data.firstname}!`;
+
+    await loadFavorites();
+
     loadAssets();
+
 });
 
 //navigation buttons at top bar for main pages
@@ -53,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
             localStorage.removeItem('token');
-            window.location.href = 'index.html';
+            window.location.href = 'landing.html';
         });
     }
 
@@ -74,7 +81,7 @@ async function handleToggle(btn) {
         try {
             console.log(`[Toggle Engine] Executing a single request for task: ${taskId}`);
             
-            const response = await fetch(`https://maintry-backend.onrender.com/maintenance/${taskId}/toggle`, {
+            const response = await fetch(`/maintenance/${taskId}/toggle`, {
                 method: 'PUT',
                 headers: { 
                     'Content-Type': 'application/json',
@@ -132,8 +139,25 @@ async function refreshDashboard() {
     await initCharts();
 }
 
+async function loadFavorites(){
+
+    const res = await fetch('/favorites',{
+        headers:{
+            Authorization:`Bearer ${token}`
+        }
+    });
+
+
+    favorites = await res.json();
+
+
+    renderFavorites();
+
+}
+
+
 async function loadAssetCostWidget() {
-    const res = await fetch('https://maintry-backend.onrender.com/maintenance/history/all', {
+    const res = await fetch('/maintenance/history/all', {
         headers: { Authorization: `Bearer ${token}` }
     });
 
@@ -240,7 +264,7 @@ document.getElementById('save-asset-btn').addEventListener('click', async () => 
     const type = document.getElementById('asset-type').value;
     const color = selectedAssetColor;
 
-    await fetch('https://maintry-backend.onrender.com/assets', {
+    await fetch('/assets', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -261,7 +285,7 @@ document.getElementById('add-maintenance-btn').addEventListener('click', async (
     if (notes.length >30){
         notes = notes.slice(0,30); 
     }
-    await fetch('https://maintry-backend.onrender.com/maintenance', {
+    await fetch('/maintenance', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -286,7 +310,7 @@ document.getElementById('add-maintenance-btn').addEventListener('click', async (
 // loading user assets
 
 async function loadAssets() {
-    const res = await fetch(`https://maintry-backend.onrender.com/assets?t=${Date.now()}`, {
+    const res = await fetch(`/assets?t=${Date.now()}`, {
         headers: { Authorization: `Bearer ${token}` }
     });
     const assets = await res.json();
@@ -294,7 +318,7 @@ async function loadAssets() {
     container.innerHTML = '';
 
     for (const asset of assets) {
-        const maintenanceRes = await fetch(`https://maintry-backend.onrender.com/maintenance/${asset._id}`, {
+        const maintenanceRes = await fetch(`/maintenance/${asset._id}`, {
             headers: { Authorization: `Bearer ${token}` }
         });
         const tasks = await maintenanceRes.json();
@@ -338,7 +362,7 @@ async function loadAssets() {
 
 // the dispkat of maintences 
 async function loadMaintenance(assetId) {
-    const res = await fetch(`https://maintry-backend.onrender.com/maintenance/${assetId}`, {
+    const res = await fetch(`/maintenance/${assetId}`, {
         headers: { Authorization: `Bearer ${token}` }
     });
 
@@ -372,7 +396,7 @@ async function loadMaintenance(assetId) {
 }
 
 document.getElementById('delete-assets-btn').addEventListener('click', async () => {
-    const res = await fetch('https://maintry-backend.onrender.com/assets', {
+    const res = await fetch('/assets', {
         headers: { Authorization: `Bearer ${token}` }
     });
     const assets = await res.json();
@@ -409,7 +433,7 @@ document.getElementById('confirm-delete-btn').addEventListener('click', async ()
 
     if (ids.length === 0) return;
 
-    await fetch('https://maintry-backend.onrender.com/assets/bulk-delete', {
+    await fetch('/assets/bulk-delete', {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
@@ -423,7 +447,7 @@ document.getElementById('confirm-delete-btn').addEventListener('click', async ()
 });
 
 async function loadUpcoming() {
-    const res = await fetch('https://maintry-backend.onrender.com/maintenance/upcoming/all', {
+    const res = await fetch('/maintenance/upcoming/all', {
         headers: { Authorization: `Bearer ${token}` }
     });
     const data = await res.json();
@@ -493,7 +517,7 @@ async function loadUpcoming() {
 
 // loading history page -- later feature added is cost tracking
 async function loadHistory() {
-    const res = await fetch('https://maintry-backend.onrender.com/maintenance/history/all', {
+    const res = await fetch('/maintenance/history/all', {
         headers: { Authorization: `Bearer ${token}` }
     });
     const data = await res.json();
@@ -591,7 +615,7 @@ document.getElementById('history').addEventListener('change', async (e) => {
     try {
 
         await fetch(
-            `https://maintry-backend.onrender.com/maintenance/${taskId}/cost`,
+            `/maintenance/${taskId}/cost`,
             {
                 method: 'PUT',
 
@@ -630,7 +654,7 @@ async function searchProfessionals() {
         document.getElementById('location-search').value;
 
     const res = await fetch(
-        `https://maintry-backend.onrender.com/professionals/search?task=${encodeURIComponent(task)}&location=${encodeURIComponent(location)}`,
+        `/professionals/search?task=${encodeURIComponent(task)}&location=${encodeURIComponent(location)}`,
         {
             headers: {
                 Authorization: `Bearer ${token}`
@@ -727,28 +751,106 @@ function renderProfessionals(results) {
 
 
 
-document.addEventListener('click', (e) => {
-    if (!e.target.classList.contains('pin-btn')) return;
+document.addEventListener('click', async (e)=>{
 
-    const card = e.target.closest('.professional-card');
 
-    const name = card.querySelector('h3').innerText;
-    const address = card.querySelector('.address').innerText.replace('📍', '').trim();
-    const phone = card.querySelector('.phone').innerText.replace('📞', '').trim();
+    if(!e.target.classList.contains('pin-btn'))
+        return;
+
+
+    const card =
+    e.target.closest('.professional-card');
+
+
+    const name =
+    card.querySelector('h3').innerText;
+
+
+    const address =
+    card.querySelector('.address')
+    .innerText
+    .replace('📍','')
+    .trim();
+
+
+    const phone =
+    card.querySelector('.phone')
+    .innerText
+    .replace('📞','')
+    .trim();
+
 
     const key = `${name}-${address}`;
-    
-    const existingIndex = favorites.findIndex(f => f.key === key);
 
-    if (existingIndex !== -1) {
-        favorites.splice(existingIndex, 1); // unpinning favourties
-    } else {
-        favorites.push({ key, name, address, phone });
+
+    const existing =
+    favorites.find(f=>f.key===key);
+
+
+
+    if(existing){
+
+
+        await fetch(
+            `/favorites/${encodeURIComponent(key)}`,
+            {
+                method:'DELETE',
+                headers:{
+                    Authorization:`Bearer ${token}`
+                }
+            }
+        );
+
+
+        favorites =
+        favorites.filter(
+            f=>f.key!==key
+        );
+
+
     }
-    localStorage.setItem('favorites', JSON.stringify(favorites));
+
+    else{
+
+
+        const res =
+        await fetch('/favorites',
+        {
+
+            method:'POST',
+
+            headers:{
+                'Content-Type':'application/json',
+                Authorization:`Bearer ${token}`
+            },
+
+            body:JSON.stringify({
+
+                name,
+                address,
+                phone,
+                key
+
+            })
+
+        });
+
+
+        const saved =
+        await res.json();
+
+
+        favorites.push(saved);
+
+
+    }
+
 
     renderFavorites();
+
     updatePinButtons();
+
+
 });
 
 function updatePinButtons() {
@@ -799,26 +901,31 @@ function renderFavorites() {
     });
 }
 
-document.addEventListener('click', (e) => {
+document.addEventListener('click', async (e) => {
 
     if (!e.target.classList.contains('remove-favorite-btn'))
         return;
 
     const key = e.target.dataset.key;
 
+
+    await fetch(`/favorites/${encodeURIComponent(key)}`, {
+        method:'DELETE',
+        headers:{
+            Authorization:`Bearer ${token}`
+        }
+    });
+
+
     favorites = favorites.filter(
         fav => fav.key !== key
     );
 
-    localStorage.setItem(
-        'favorites',
-        JSON.stringify(favorites)
-    );
 
     renderFavorites();
     updatePinButtons();
-});
 
+});
 function getMonth(dateStr) {
     const d = new Date(dateStr);
     if (isNaN(d)) return null;
@@ -880,7 +987,7 @@ function calculateEfficiencyLast12(tasks) {
 }
 
 async function updateTotalCost() {
-    const res = await fetch('https://maintry-backend.onrender.com/maintenance/history/all', {
+    const res = await fetch('/maintenance/history/all', {
         headers: { Authorization: `Bearer ${token}` }
     });
 
@@ -916,7 +1023,7 @@ function getLast12Months() {
 
 async function initCharts() {
     try {
-        const res = await fetch('https://maintry-backend.onrender.com/maintenance/history/all', {
+        const res = await fetch('/maintenance/history/all', {
             headers: { Authorization: `Bearer ${token}` }
         });
 
