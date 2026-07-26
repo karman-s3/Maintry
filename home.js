@@ -11,13 +11,13 @@ const token = localStorage.getItem('token');
 
 const navButtons = document.querySelectorAll('.nav-btn');
 const pages = document.querySelectorAll('.page');
-//login page
+
 if (!token) {
     window.location.href = 'login.html';
 }
 
 // authorization for user
-fetch('/protected', {
+fetch('https://maintry-backend.onrender.com/protected', {
     headers: { Authorization: `Bearer ${token}` }
 })
 .then(res => {
@@ -81,7 +81,7 @@ async function handleToggle(btn) {
         try {
             console.log(`[Toggle Engine] Executing a single request for task: ${taskId}`);
             
-            const response = await fetch(`/maintenance/${taskId}/toggle`, {
+            const response = await fetch(`https://maintry-backend.onrender.com/maintenance/${taskId}/toggle`, {
                 method: 'PUT',
                 headers: { 
                     'Content-Type': 'application/json',
@@ -141,7 +141,7 @@ async function refreshDashboard() {
 
 async function loadFavorites(){
 
-    const res = await fetch('/favorites',{
+    const res = await fetch('https://maintry-backend.onrender.com/favorites',{
         headers:{
             Authorization:`Bearer ${token}`
         }
@@ -157,7 +157,7 @@ async function loadFavorites(){
 
 
 async function loadAssetCostWidget() {
-    const res = await fetch('/maintenance/history/all', {
+    const res = await fetch('https://maintry-backend.onrender.com/maintenance/history/all', {
         headers: { Authorization: `Bearer ${token}` }
     });
 
@@ -264,7 +264,7 @@ document.getElementById('save-asset-btn').addEventListener('click', async () => 
     const type = document.getElementById('asset-type').value;
     const color = selectedAssetColor;
 
-    await fetch('/assets', {
+    await fetch('https://maintry-backend.onrender.com/assets', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -285,7 +285,7 @@ document.getElementById('add-maintenance-btn').addEventListener('click', async (
     if (notes.length >30){
         notes = notes.slice(0,30); 
     }
-    await fetch('/maintenance', {
+    await fetch('https://maintry-backend.onrender.com/maintenance', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -310,7 +310,7 @@ document.getElementById('add-maintenance-btn').addEventListener('click', async (
 // loading user assets
 
 async function loadAssets() {
-    const res = await fetch(`/assets?t=${Date.now()}`, {
+    const res = await fetch(`https://maintry-backend.onrender.com/assets?t=${Date.now()}`, {
         headers: { Authorization: `Bearer ${token}` }
     });
     const assets = await res.json();
@@ -362,7 +362,7 @@ async function loadAssets() {
 
 // the dispkat of maintences 
 async function loadMaintenance(assetId) {
-    const res = await fetch(`/maintenance/${assetId}`, {
+    const res = await fetch(`https://maintry-backend.onrender.com/maintenance/${assetId}`, {
         headers: { Authorization: `Bearer ${token}` }
     });
 
@@ -396,7 +396,7 @@ async function loadMaintenance(assetId) {
 }
 
 document.getElementById('delete-assets-btn').addEventListener('click', async () => {
-    const res = await fetch('/assets', {
+    const res = await fetch('https://maintry-backend.onrender.com/assets', {
         headers: { Authorization: `Bearer ${token}` }
     });
     const assets = await res.json();
@@ -433,7 +433,7 @@ document.getElementById('confirm-delete-btn').addEventListener('click', async ()
 
     if (ids.length === 0) return;
 
-    await fetch('/assets/bulk-delete', {
+    await fetch('https://maintry-backend.onrender.com/assets/bulk-delete', {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
@@ -447,7 +447,7 @@ document.getElementById('confirm-delete-btn').addEventListener('click', async ()
 });
 
 async function loadUpcoming() {
-    const res = await fetch('/maintenance/upcoming/all', {
+    const res = await fetch('https://maintry-backend.onrender.com/maintenance/upcoming/all', {
         headers: { Authorization: `Bearer ${token}` }
     });
     const data = await res.json();
@@ -517,7 +517,7 @@ async function loadUpcoming() {
 
 // loading history page -- later feature added is cost tracking
 async function loadHistory() {
-    const res = await fetch('/maintenance/history/all', {
+    const res = await fetch('https://maintry-backend.onrender.com/maintenance/history/all', {
         headers: { Authorization: `Bearer ${token}` }
     });
     const data = await res.json();
@@ -615,7 +615,7 @@ document.getElementById('history').addEventListener('change', async (e) => {
     try {
 
         await fetch(
-            `/maintenance/${taskId}/cost`,
+            `https://maintry-backend.onrender.com/maintenance/${taskId}/cost`,
             {
                 method: 'PUT',
 
@@ -654,7 +654,7 @@ async function searchProfessionals() {
         document.getElementById('location-search').value;
 
     const res = await fetch(
-        `/professionals/search?task=${encodeURIComponent(task)}&location=${encodeURIComponent(location)}`,
+        `https://maintry-backend.onrender.com/professionals/search?task=${encodeURIComponent(task)}&location=${encodeURIComponent(location)}`,
         {
             headers: {
                 Authorization: `Bearer ${token}`
@@ -792,7 +792,7 @@ document.addEventListener('click', async (e)=>{
 
 
         await fetch(
-            `/favorites/${encodeURIComponent(key)}`,
+            `https://maintry-backend.onrender.com/favorites/${encodeURIComponent(key)}`,
             {
                 method:'DELETE',
                 headers:{
@@ -814,7 +814,7 @@ document.addEventListener('click', async (e)=>{
 
 
         const res =
-        await fetch('/favorites',
+        await fetch('https://maintry-backend.onrender.com/favorites',
         {
 
             method:'POST',
@@ -909,7 +909,7 @@ document.addEventListener('click', async (e) => {
     const key = e.target.dataset.key;
 
 
-    await fetch(`/favorites/${encodeURIComponent(key)}`, {
+    await fetch(`https://maintry-backend.onrender.com/favorites/${encodeURIComponent(key)}`, {
         method:'DELETE',
         headers:{
             Authorization:`Bearer ${token}`
@@ -987,7 +987,7 @@ function calculateEfficiencyLast12(tasks) {
 }
 
 async function updateTotalCost() {
-    const res = await fetch('/maintenance/history/all', {
+    const res = await fetch('https://maintry-backend.onrender.com/maintenance/history/all', {
         headers: { Authorization: `Bearer ${token}` }
     });
 
@@ -1023,7 +1023,7 @@ function getLast12Months() {
 
 async function initCharts() {
     try {
-        const res = await fetch('/maintenance/history/all', {
+        const res = await fetch('https://maintry-backend.onrender.com/maintenance/history/all', {
             headers: { Authorization: `Bearer ${token}` }
         });
 
