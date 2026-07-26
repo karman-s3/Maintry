@@ -318,9 +318,10 @@ async function loadAssets() {
     container.innerHTML = '';
 
     for (const asset of assets) {
-        const maintenanceRes = await fetch(`/maintenance/${asset._id}`, {
+        const maintenanceRes = await fetch(`https://maintry-backend.onrender.com/maintenance/${asset._id}`, {
             headers: { Authorization: `Bearer ${token}` }
         });
+        
         const tasks = await maintenanceRes.json();
         
         const totalTasks = tasks.length;
